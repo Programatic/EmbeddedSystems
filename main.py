@@ -37,7 +37,7 @@ faceCascade = cv2.CascadeClassifier("haarcascade_upperbody.xml")
 
 event_state = EventState.LOW
 
-def main():
+def start(cam):
     global event_state
 
     intruder = ()
@@ -45,7 +45,7 @@ def main():
 
     deque = collections.deque(maxlen=10)
 
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture(cam)
 
     frame_width = int(video_capture.get(3))
     frame_height = int(video_capture.get(4))
@@ -112,5 +112,11 @@ def main():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
+    t1 = Thread(target = start, args=[2])
+    # t2 = Thread(target = start, args=[]) 
     server.run_web_server()
-    main()
+
+    t1.start()
+    # t2.start()
+    t1.join()
+    # t2.join()
