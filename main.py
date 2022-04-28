@@ -1,11 +1,33 @@
+from threading import Thread
 from xmlrpc.client import _datetime_type
 import cv2
 import numpy as np
 import collections
 import datetime
 import base64
+import smtplib, ssl
 from enum import Enum
 import server
+
+PASSWORD = 'CSDSSECUREWAREHOUSE'
+
+port = 465
+context = ssl.create_default_context()
+
+smserver = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
+smserver.login("securewarehousecsds@gmail.com", PASSWORD)
+
+def sendAlert():
+    try:
+        smserver.sendmail("securewarehousecsds@gmail.com", server.alert_to, 
+        """
+        Subject: Urgent! Thread Identified
+
+        There is a threat aproaching the warehouse!
+        """
+        )
+    except:
+        pass
 
 class EventState(Enum):
     LOW = 0,
@@ -66,6 +88,7 @@ def main():
                 if w - average > 10:
                     event_state = EventState.HIGH
                     print("Intruder is approaching", w - intruder[2], h - intruder[3])
+                    Thread(target = sendAlert).start()
 
                 intruder = (x, y, w, h)
 
@@ -77,7 +100,7 @@ def main():
 
             outVid.write(frames) 
 
-        retval, buffer = cv2.imencode('.jpg', frames)
+        _, buffer = cv2.imencode('.jpg', frames)
         server.frame = base64.b64encode(buffer).decode("utf-8")
 
         cv2.imshow('Video', frames)

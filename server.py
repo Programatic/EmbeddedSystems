@@ -1,12 +1,20 @@
 import asyncio
 import websockets
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 from threading import Thread
 
 frame = ''
+alert_to = 'fms34@case.edu'
 
-class WebServer(BaseHTTPRequestHandler):
+class WebServer(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def do_GET(self):
+        if self.path != "/":
+            super().do_GET()
+            return
+
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -23,7 +31,7 @@ class WebServer(BaseHTTPRequestHandler):
  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
  
-    <title>WebSocker Client</title>
+    <title>Basic Web Panel</title>
  
 </head>
  
@@ -56,11 +64,6 @@ socket.onmessage = function (event) {
  
 </html>
         """, "utf-8"))
-        # self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
-        # self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
-        # self.wfile.write(bytes("<body>", "utf-8"))
-        # self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
-        # self.wfile.write(bytes("</body></html>", "utf-8"))
 
 sockets = []
 
@@ -71,7 +74,10 @@ async def handler(websocket, path):
     sockets.append(websocket)
     while True:
         for soc in sockets:
-            await soc.send(frame) 
+            try:
+                await soc.send(frame) 
+            except:
+                pass
 
 async def ws():
     async with websockets.serve(handler, "192.168.1.23", 8000):
