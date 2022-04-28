@@ -1,5 +1,4 @@
 from threading import Thread
-from xmlrpc.client import _datetime_type
 import cv2
 import numpy as np
 import collections
@@ -94,7 +93,7 @@ def main():
 
         if event_state == EventState.MEDIUM or event_state == EventState.HIGH:
             if outVid is None:
-                outVid = cv2.VideoWriter(f'/tmp/vids/{ datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S") }.mp4', 
+                outVid = cv2.VideoWriter(f'./vids/{ datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S") }.mp4', 
                          cv2.VideoWriter_fourcc(*'mp4v'),
                          30, size)
 

@@ -80,14 +80,14 @@ async def handler(websocket, path):
                 pass
 
 async def ws():
-    async with websockets.serve(handler, "192.168.1.23", 8000):
+    async with websockets.serve(handler, "0.0.0.0", 8000):
         await asyncio.Future() 
 
 def run_ws_server():
     asyncio.run(ws())
 
 def run_web_server():
-    webServer = HTTPServer(("192.168.1.23", 8080), WebServer)
+    webServer = HTTPServer(("0.0.0.0", 8080), WebServer)
     thread = Thread(target = webServer.serve_forever)
     thread.start() 
 
