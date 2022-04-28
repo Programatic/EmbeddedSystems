@@ -16,6 +16,8 @@ context = ssl.create_default_context()
 smserver = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
 smserver.login("securewarehousecsds@gmail.com", PASSWORD)
 
+CAM1 = 1
+
 def sendAlert():
     try:
         smserver.sendmail("securewarehousecsds@gmail.com", server.alert_to, 
