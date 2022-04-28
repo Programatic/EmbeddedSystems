@@ -2,6 +2,7 @@ import asyncio
 import websockets
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from threading import Thread
+from urllib.parse import unquote
 
 frame = ''
 frame2 = ''
@@ -10,6 +11,17 @@ alert_to = 'fms34@case.edu'
 class WebServer(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def do_POST(self):
+        global alert_to
+
+        content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+        post_data = self.rfile.read(content_length)
+
+        alert_to = unquote(post_data.split(b'alertto=')[1].decode("utf-8"))
+        print('Updating to ' + alert_to)
+    
+        self.do_GET()
 
     def do_GET(self):
         if self.path != "/":
@@ -41,6 +53,12 @@ class WebServer(SimpleHTTPRequestHandler):
     <br>
     <img width="640" height="480">
     <img width="640" height="480">
+    <br>
+    <form method="post">
+        <label for="fname">Who to alert:</label><br>
+        <input type="text" name="alertto" value='""" + alert_to + """'><br><br>
+        <input type="submit" value="Submit">
+    </form> 
 </body>
  
 <script>
