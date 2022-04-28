@@ -33,7 +33,7 @@ class EventState(Enum):
     MEDIUM = 1,
     HIGH = 2
 
-faceCascade = cv2.CascadeClassifier("/home/ford/Desktop/EECS488/haarcascade_upperbody.xml")
+faceCascade = cv2.CascadeClassifier("haarcascade_upperbody.xml")
 
 event_state = EventState.LOW
 
