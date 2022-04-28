@@ -102,7 +102,11 @@ def start(cam):
             outVid.write(frames) 
 
         _, buffer = cv2.imencode('.jpg', frames)
-        server.frame = base64.b64encode(buffer).decode("utf-8")
+
+        if cam == CAM1:
+            server.frame = base64.b64encode(buffer).decode("utf-8")
+        else:
+            server.frame2 = base64.b64encode(buffer).decode("utf-8")
 
         cv2.imshow('Video', frames)
         if cv2.waitKey(1) & 0xFF == ord('q'):
